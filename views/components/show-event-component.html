@@ -1,0 +1,10 @@
+<script type="text/x-template" id="show-event">
+<div class="row">
+    <div class="col-lg-6" v-if="loading==0">
+        <h1>{{event.name}}</h1>
+    </div>
+    <div class="col-lg-6" v-if="loading==1">
+        <div class="spinner"></div>
+    </div>
+</div>
+</script>
