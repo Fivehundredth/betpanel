@@ -31,6 +31,7 @@ const eventsComp = Vue.component('events-component', {
         getEvents(){
             axios.get('/index.php?action=get-events')
                 .then(response => {
+                    //console.log(response.data);
                     this.loading = 0;
                     this.events = response.data;
                 })
@@ -45,14 +46,34 @@ const showEventComp = Vue.component('show-event-component', {
     data(){
         return {
             loading: 1,
-            event: {}
+            event: {},
+            create: 0,
+            pool: {
+                options: ['test', 'test1'],
+                name: '',
+                arbitrator: '',
+                fee: 0,
+                min: 0,
+                max: 0,
+                endblock: 0
+            }
         }
     },
     props: {
         id: 0,
     },
     methods: {
-
+        getEvent(){
+            axios.get('/index.php?action=get-event&event_id='+this.id)
+                .then(response => {
+                    this.loading = 0;
+                    //console.log(response.data);
+                    this.event = response.data;
+                })
+        }
+    },
+    mounted(){
+        this.getEvent();
     }
 });
 const routes = [
