@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
         case 'create-event':
             try {
                 $db = db::getInstance();
-                $query = $db->prepare('INSERT INTO `events` VALUES (null, :name)');
+                $query = $db->prepare('INSERT INTO `events` VALUES (null, :name, null)');
                 $query->bindParam(':name', $_POST['name']);
                 $query->execute();
                 $r = $db->lastInsertId();
@@ -23,6 +23,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
                 echo json_encode(['error'=>$e->getMessage()]);
                 exit;
             }
+            break;
+        case 'contract':
+            try{
+                $db = db::getInstance();
+                $query = $db->prepare('UPDATE `events` SET `contract`=:contract WHERE `id`=:id');
+                $query->bindParam(':contract', $_POST['address']);
+                $query->bindParam(':id', $_POST['event']);
+                if ($query->execute()){
+                    echo json_encode(['success'=>1]);
+                    exit;
+                }
+            } catch (PDOException $e){
+                echo json_encode(['error'=>$e->getMessage()]);
+                exit;
+            }
+            break;
     }
 }
 if ($_SERVER['REQUEST_METHOD'] == 'GET'){

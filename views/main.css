@@ -16,3 +16,6 @@
     background-image: url('/Spinner-1s-200px.gif');
     margin: 0 auto;
 }
+#new-pool-options input{
+    margin-bottom: 10px;
+}

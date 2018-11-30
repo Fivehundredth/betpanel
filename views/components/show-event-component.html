@@ -3,6 +3,10 @@
     <div class="col-lg-6" v-if="loading==0">
         <h1>{{event.name}}</h1>
         <span>Event id : {{event.id}}</span>
+        <p>Contract address: {{event.contract}}</p>
+        <p>Arbitrator: {{arbitrator}}</p>
+        <p>Fee: {{fee}}</p>
+        <p>End block: {{end}}</p>
         <h3>Created pools</h3>
         <span style="cursor: pointer;color:blue;text-decoration: underline;" @click="create=1">Create new pool</span>
         <table class="table">
@@ -28,31 +32,19 @@
                 <input type="text" class="form-control">
             </div>
             <div class="form-group" id="new-pool-options">
-                <label>Options (names)</label>
-                <span style="cursor: pointer;color:blue;text-decoration: underline;">Add option</span>
-                <input type="text" class="form-control">
-                <input type="text" class="form-control">
-            </div>
-            <div class="form-group">
-                <label>Arbitrator (ETH address)</label>
-                <input type="text" class="form-control">
-            </div>
-            <div class="form-group">
-                <label>Arbitrator's fee (percents)</label>
-                <input type="number" class="form-control">
-            </div>
-            <div class="form-group">
-                <label>End block</label>
-                <input type="number" class="form-control">
+                <label>Bids (names)</label>
+                <span style="cursor: pointer;color:blue;text-decoration: underline;" @click="addOption">Add bid</span>
+                <input type="text" class="form-control" v-for="option in pool.options" v-model="option.name">
             </div>
             <div class="form-group">
                 <label>Minimal bid value</label>
-                <input type="number" class="form-control">
+                <input type="number" class="form-control" value="0">
             </div>
             <div class="form-group">
                 <label>Maximum bid value</label>
-                <input type="number" class="form-control">
+                <input type="number" class="form-control" value="0">
             </div>
+            <button class="btn btn-success">Create</button>
         </form>
     </div>
     <div class="col-lg-6" v-if="loading==1">

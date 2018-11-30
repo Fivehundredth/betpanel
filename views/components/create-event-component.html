@@ -6,6 +6,18 @@
                 <label>Name:</label>
                 <input type="text" class="form-control" v-model="name">
             </div>
+            <div class="form-group">
+                <label>Arbitrator:</label>
+                <input type="text" class="form-control" v-model="arbitrator">
+            </div>
+            <div class="form-group">
+                <label>Fee:</label>
+                <input type="text" class="form-control" v-model="fee">
+            </div>
+            <div class="form-group">
+                <label>End block:</label>
+                <input type="text" class="form-control" v-model="end">
+            </div>
             <button class="btn" @click="create">Ok</button>
         </div>
         <div class="col-lg-6" v-if="loading==1">
