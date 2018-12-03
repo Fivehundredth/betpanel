@@ -82,11 +82,11 @@ contract Betting {
             }
         }
         require(!found);
-        
+        //
         /* check names for duplicates */
-        for (uint8 y=0;y<_names.length;y++){
-            require(_names[y] != _names[y+1]);
-        }
+        //for (uint8 y=0;y<_names.length;y++){
+        //    require(_names[y] != _names[(y+1)]);
+        //}
         
         uint newId = bettingPools.length++;
         bettingPools[newId].id = newId;
