@@ -7,20 +7,34 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="views/main.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <title>Panel</title>
 </head>
 <body>
 <?php require_once 'views/components/create-event-component.html'; ?>
 <?php require_once 'views/components/events-component.html'; ?>
 <?php require_once 'views/components/show-event-component.html'; ?>
-<div class="container">
-    <div id="app">
-        <div class="sidebar">
-            <ul>
-                <li><router-link to="/events">Events</router-link></li>
-                <li><router-link to="/create-event">Create event</router-link></li>
-            </ul>
-        </div>
+<div id="app">
+    <div class="header">
+        <nav class="navbar navbar-dark bg-dark navbar-expand-lg">
+            <a class="navbar-brand" href="#">Betting events control panel</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item active">
+                        <router-link class="nav-link" to="/events">Events</router-link>
+                    </li>
+                    <li class="nav-item">
+                        <router-link class="nav-link" to="/create-event">Create event</router-link>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <div class="container">
         <router-view></router-view>
     </div>
 </div>

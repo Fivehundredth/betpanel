@@ -63,11 +63,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET'){
                 $query->bindParam(':event_id', $_GET['event_id']);
                 $query->execute();
                 $event = $query->fetchAll(PDO::FETCH_ASSOC);
-                $query = $db->prepare('SELECT * FROM `pools` WHERE `event_id`=:event_id');
-                $query->bindParam(':event_id', $_GET['event_id']);
-                $query->execute();
-                $pools = $query->fetchAll(PDO::FETCH_ASSOC);
-                $event[0]['pools']=$pools;
                 echo json_encode($event[0]);
                 exit;
             } catch (PDOException $e){

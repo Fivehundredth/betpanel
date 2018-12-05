@@ -1,15 +1,19 @@
 <script type="text/x-template" id="show-event">
 <div class="row">
+    <div class="col-lg-12">
+        <p><router-link to="/events"><< Back</router-link></p>
+    </div>
     <div class="col-lg-6" v-if="loading==0">
         <h1>{{event.name}}</h1>
         <span>Event id : {{event.id}}</span>
-        <p>Contract address: {{event.contract}}</p>
-        <p>Arbitrator: {{arbitrator}}</p>
+        <p>Contract address: <a v-bind:href="link">{{event.contract}}</a></p>
+        <p>Arbitrator: <a v-bind:href="alink">{{arbitrator}}</a></p>
         <p>Fee: {{fee}}</p>
         <p>End block: {{end}}</p>
         <h3>Created pools</h3>
-        <span style="cursor: pointer;color:blue;text-decoration: underline;" @click="create=1">Create new pool</span>
-        <table class="table">
+        <p style="color:red;" v-show="poolcreated">Wait until transaction is mined and reload this page to see new pool</p>
+        <p v-if="pools.length==0">No pools</p>
+        <table class="table" v-if="pools.length>0">
             <thead>
             <tr>
                 <th>id</th>
@@ -17,35 +21,53 @@
             </tr>
             </thead>
             <tbody>
-            <tr v-for="pool in event.pools">
+            <tr v-for="pool in pools">
                 <td>{{pool.id}}</td>
                 <td>{{pool.name}}</td>
             </tr>
             </tbody>
         </table>
     </div>
-    <div class="col-lg-6" v-show="create">
+    <div class="col-lg-6" v-show="loading==0">
         <h1>New pool</h1>
-        <form>
-            <div class="form-group">
-                <label>Name</label>
-                <input type="text" class="form-control">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">Winner</h5>
+                        <p class="card-text">Create pool on winner of the match.</p>
+                        <a href="#" class="btn btn-primary" @click="setCurrentPool(1)">Create</a>
+                    </div>
+                </div>
             </div>
-            <div class="form-group" id="new-pool-options">
-                <label>Bids (names)</label>
-                <span style="cursor: pointer;color:blue;text-decoration: underline;" @click="addOption">Add bid</span>
-                <input type="text" class="form-control" v-for="option in pool.options" v-model="option.name">
+            <div class="col-md-6">
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">Exact match result</h5>
+                        <p class="card-text">Create pool on exact result of the match.</p>
+                        <a href="#" class="btn btn-primary" @click="setCurrentPool(2)">Create</a>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label>Minimal bid value</label>
-                <input type="number" class="form-control" value="0">
+        </div>
+        <div class="row" v-if="currentpool">
+            <div class="col-lg-12">
+                <h4>Pool settings</h4>
+                <div class="form-group" id="new-pool-options">
+                    <label>Options</label>
+                    <input type="text" v-for="option in currentpool.options" v-model="option.name" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Minimal amount of bid</label>
+                    <input type="number" class="form-control" v-model="currentpool.min">
+                </div>
+                <div class="form-group">
+                    <label>Maximal amount of bid</label>
+                    <input type="number" class="form-control" v-model="currentpool.max">
+                </div>
+                <button class="btn btn-success" @click="createPool">Create</button>
             </div>
-            <div class="form-group">
-                <label>Maximum bid value</label>
-                <input type="number" class="form-control" value="0">
-            </div>
-            <button class="btn btn-success">Create</button>
-        </form>
+        </div>
     </div>
     <div class="col-lg-6" v-if="loading==1">
         <div class="spinner"></div>
