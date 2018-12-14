@@ -1,5 +1,6 @@
 <?php
 require_once 'classes/db.php';
+require_once 'classes/Event.php';
 session_start();
 if ($_SERVER['REQUEST_METHOD'] == 'POST'){
     switch ($_POST['action']){
@@ -10,16 +11,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
             break;
         case 'create-event':
             try {
-                $db = db::getInstance();
-                $query = $db->prepare('INSERT INTO `events` VALUES (null, :name, null)');
-                $query->bindParam(':name', $_POST['name']);
-                $query->execute();
-                $r = $db->lastInsertId();
-                if ($r){
-                    echo json_encode(['success' => $r]);
+                $event = new Event();
+                $event->setName($_POST['name']);
+                $id = $event->save();
+                if ($id){
+                    echo json_encode(['success'=>$id]);
                     exit;
                 }
-            } catch (PDOException $e){
+            } catch (Exception $e){
                 echo json_encode(['error'=>$e->getMessage()]);
                 exit;
             }
@@ -36,6 +35,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
                 }
             } catch (PDOException $e){
                 echo json_encode(['error'=>$e->getMessage()]);
+                exit;
+            }
+            break;
+        case 'delete':
+            $id = $_POST['id'];
+            $event = Event::find($id);
+            if ($event){
+                if ($event->delete()){
+                    echo json_encode(['success'=>$id]);
+                    exit;
+                } else {
+                    echo json_encode(['error'=>'can not delete']);
+                    exit;
+                }
+            } else {
+                echo json_encode(['error'=>'can not find event']);
                 exit;
             }
             break;

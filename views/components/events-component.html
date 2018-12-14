@@ -1,21 +1,18 @@
 <script type="text/x-template" id="events">
-    <div class="row">
-        <div class="col-lg-6" v-if="loading==0">
-            <h1>Events</h1>
-            <table class="table table-stripped">
-                <thead>
-                <tr>
-                    <th>id</th>
-                    <th>name</th>
-                </tr>
-                </thead>
-                <tbody>
-                <router-link v-for="event in events" :key="event.id" tag="tr" :to="{name: 'show-event', params:{id: event.id}}" style="cursor: pointer;">
-                    <td>{{event.id}}</td>
-                    <td>{{event.name}}</td>
+    <div class="row content-row">
+        <nav class="events-nav col-lg-12">
+            <ul>
+                <li class="active"><router-link to="/events">Events</router-link></li>
+                <li><router-link to="/create-event">Create event</router-link></li>
+            </ul>
+        </nav>
+        <div class="col-lg-12 events-box" v-if="loading==0">
+            <div class="soccer-icon"></div>
+            <h2>Soccer</h2>
+                <router-link v-for="event in events" :key="event.id" tag="div" class="event-tr" :to="{name: 'show-event', params:{id: event.id}}" style="cursor: pointer;">
+                    <span>{{event.id}}</span><span>{{event.name}}</span>
                 </router-link>
-                </tbody>
-            </table>
+
         </div>
         <div class="col-lg-6" v-if="loading==1">
             <div class="spinner"></div>

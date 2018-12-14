@@ -5,13 +5,37 @@ const createEventComp = Vue.component('create-event-component',{
             name: '',
             loading: 0,
             id: 0,
-            fee: 0,
-            end: 0,
+            fee: '',
+            end: '',
             arbitrator: '',
-            contract: ''
+            contract: '',
+            error: '',
         }
     },
     methods: {
+        validate(){
+            if (typeof web3 == 'undefined'){
+                this.error = 'Please install MetaMask';
+                return;
+            }
+            if (web3.eth.accounts.length == 0){
+                this.error = 'Please unlock MetaMask';
+                return;
+            }
+            if (!this.name.length){
+                this.error = 'Enter name';
+            } else {
+                this.error = '';
+            }
+            if (!this.arbitrator || !web3.isAddress(this.arbitrator) ){
+                this.error = 'Enter valid ETH abritrator address';
+            } else {
+                this.error = '';
+            }
+            if (!this.error){
+                this.create();
+            }
+        },
         create(){
             this.loading = 1;
             axios.post('/index.php','action=create-event&name='+this.name)
@@ -20,6 +44,16 @@ const createEventComp = Vue.component('create-event-component',{
                     if (response.data.success){
                         this.id = response.data.success;
                         this.deployContract();
+                    }
+                })
+        },
+        deleteEvent(){
+            this.loading = 1;
+            axios.post('/index.php', 'action=delete&id='+this.id)
+                .then(response => {
+                    console.log(response);
+                    if (response.data.success){
+                        this.loading = 0;
                     }
                 })
         },
@@ -56,10 +90,14 @@ const createEventComp = Vue.component('create-event-component',{
                     gas: '4700000'
                 }, function (e, contract){
                     console.log(e, contract);
-                    if (typeof contract.address !== 'undefined') {
-                        console.log('Contract mined! address: ' + contract.address + ' transactionHash: ' + contract.transactionHash);
-                        that.contract = contract.address;
-                        that.updateContractAddress();
+                    if (!e){
+                        if (typeof contract.address !== 'undefined') {
+                            console.log('Contract mined! address: ' + contract.address + ' transactionHash: ' + contract.transactionHash);
+                            that.contract = contract.address;
+                            that.updateContractAddress();
+                        }
+                    } else {
+                        that.deleteEvent();
                     }
                 })
         }

@@ -1,9 +1,9 @@
 <script type="text/x-template" id="show-event">
-<div class="row">
+<div class="row content-row">
     <div class="col-lg-12">
         <p><router-link to="/events"><< Back</router-link></p>
     </div>
-    <div class="col-lg-6" v-if="loading==0">
+    <div class="col-lg-5 content-box" v-if="loading==0">
         <h1>{{event.name}}</h1>
         <span>Event id : {{event.id}}</span>
         <p>Contract address: <a v-bind:href="link">{{event.contract}}</a></p>
@@ -28,7 +28,7 @@
             </tbody>
         </table>
     </div>
-    <div class="col-lg-6" v-show="loading==0">
+    <div class="col-lg-6 offset-1" v-show="loading==0">
         <h1>New pool</h1>
         <div class="row">
             <div class="col-md-6">
