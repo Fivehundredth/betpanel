@@ -14,9 +14,9 @@
     margin-top: 30px;
 }
 .content-box{
-    box-shadow: 7px 7px 5px 0px rgba(50, 50, 50, 0.3);
+    background: linear-gradient(to bottom, #e7e7e7 0%,#c1c1c1 41%,#b2b2b2 75%,#a2a2a2 100%);
     border-radius: 19px;
-    border: 1px solid #eee;
+    padding: 20px;
 }
 .content-row{
     padding-top: 30px;
