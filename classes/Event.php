@@ -11,6 +11,14 @@ class Event
     public function setName($name){
         $this->name = $name;
     }
+    public function setContract($contract)
+    {
+        $this->contract = $contract;
+    }
+    public function setHash($hash)
+    {
+        $this->txn_hash = $hash;
+    }
     public static function find($id)
     {
         try {
@@ -42,7 +50,6 @@ class Event
             return false;
         }
     }
-
     public function update()
     {
         try {

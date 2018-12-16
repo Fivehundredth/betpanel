@@ -24,17 +24,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
             }
             break;
         case 'contract':
-            try{
-                $db = db::getInstance();
-                $query = $db->prepare('UPDATE `events` SET `contract`=:contract WHERE `id`=:id');
-                $query->bindParam(':contract', $_POST['address']);
-                $query->bindParam(':id', $_POST['event']);
-                if ($query->execute()){
-                    echo json_encode(['success'=>1]);
+            $id = $_POST['event'];
+            $contract = $_POST['address'];
+            $event = Event::find($id);
+            if ($event != false){
+                $event->setContract($contract);
+                if ($event->update()){
+                    echo json_encode(['success'=>$id]);
+                    exit;
+                } else {
+                    echo json_encode(['error'=>'could not save']);
                     exit;
                 }
-            } catch (PDOException $e){
-                echo json_encode(['error'=>$e->getMessage()]);
+            } else {
+                echo json_encode(['error'=>'could not find event']);
+                exit;
+            }
+            break;
+        case 'hash':
+            $id = $_POST['event'];
+            $hash = $_POST['hash'];
+            $event = Event::find($id);
+            if ($event != false){
+                $event->setHash($hash);
+                if ($event->update()){
+                    echo json_encode(['success'=>$id]);
+                    exit;
+                } else {
+                    echo json_encode(['error'=>'could not save']);
+                    exit;
+                }
+            } else {
+                echo json_encode(['error'=>'could not find event']);
                 exit;
             }
             break;

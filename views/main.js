@@ -10,6 +10,8 @@ const createEventComp = Vue.component('create-event-component',{
             arbitrator: '',
             contract: '',
             error: '',
+            mining: 0,
+            hash: ''
         }
     },
     methods: {
@@ -51,23 +53,25 @@ const createEventComp = Vue.component('create-event-component',{
             this.loading = 1;
             axios.post('/index.php', 'action=delete&id='+this.id)
                 .then(response => {
-                    console.log(response);
+                    //console.log(response);
                     if (response.data.success){
                         this.loading = 0;
                     }
                 })
         },
         updateContractAddress(){
-            console.log('this.contract is '+this.contract);
-            console.log('...perform post request');
             this.loading = 1;
             axios.post('/index.php', 'action=contract&event='+this.id+'&address='+this.contract)
                 .then(response => {
-                    console.log('Respond is :');
-                    console.log(response.data);
                     if (response.data.success){
                         this.$router.push('/events');
                     }
+                })
+        },
+        saveHash(){
+            axios.post('/index.php', 'action=hash&hash='+this.hash+'&event='+this.id)
+                .then(response => {
+                    console.log(response);
                 })
         },
         deployContract(){
@@ -91,6 +95,9 @@ const createEventComp = Vue.component('create-event-component',{
                 }, function (e, contract){
                     console.log(e, contract);
                     if (!e){
+                        that.mining = 1;
+                        that.hash = contract.transactionHash;
+                        that.saveHash();
                         if (typeof contract.address !== 'undefined') {
                             console.log('Contract mined! address: ' + contract.address + ' transactionHash: ' + contract.transactionHash);
                             that.contract = contract.address;
@@ -643,6 +650,7 @@ const showEventComp = Vue.component('show-event-component', {
                 }
             ],
             poolcreated: 0,
+            locked: 0,
         }
     },
     props: {
@@ -722,12 +730,17 @@ const showEventComp = Vue.component('show-event-component', {
             })
         },
         setCurrentPool(id){
+            this.locked = 1;
             let that = this;
             this.possiblePools.forEach(function(elem){
                 if (elem.id == id){
                     that.currentpool = elem;
                 }
             })
+        },
+        close(){
+            this.locked = 0;
+            this.currentpool = false;
         }
     },
     created(){

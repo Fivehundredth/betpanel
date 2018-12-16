@@ -141,3 +141,38 @@
     color: red;
     font-weight: bold;
 }
+.back-btn{
+    width: 200px;
+    height: 50px;
+    line-height: 50px;
+    background-color: rgb(27,218,125);
+    border-radius: 15px;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+.back-btn:hover{
+    cursor: pointer;
+}
+.overlay{
+    background-color: rgba(3, 0, 0, 0.4);
+    z-index: 998;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+}
+.pool-modal{
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+    z-index: 999;
+    background: linear-gradient(to bottom, #e7e7e7 0%,#c1c1c1 41%,#b2b2b2 75%,#a2a2a2 100%);
+    width: 30%;
+    padding: 30px;
+    border-radius: 30px;
+    border: 1px solid black;
+}
