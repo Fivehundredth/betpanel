@@ -140,6 +140,7 @@ const showEventComp = Vue.component('show-event-component', {
             event: {},
             fee: 0,
             arbitrator: '',
+            estatus: 0,
             end: 0,
             pools: [],
             currentpool: false,
@@ -649,9 +650,24 @@ const showEventComp = Vue.component('show-event-component', {
                     "type": "event"
                 }
             ],
+            contract: {},
             poolcreated: 0,
             locked: 0,
+            currentblock: 0,
+            activepool:
+                {
+                    active: 0,
+                    id: 0,
+                    name: '',
+                    winner: '',
+                    min: 0,
+                    max: 0,
+                    bids: [],
+                    bets: [],
+                    loaded: 0,
+                },
         }
+
     },
     props: {
         id: 0,
@@ -662,6 +678,29 @@ const showEventComp = Vue.component('show-event-component', {
         },
         alink(){
             return 'https://rinkeby.etherscan.io/address/'+this.arbitrator;
+        },
+        status(){
+            if (this.estatus == 0){
+                return 'Open';
+            } else if (this.estatus == 1){
+                return 'Finished';
+            } else if (this.estatus == 2){
+                return 'Closed';
+            }
+        },
+        isarbitrator(){
+            if (web3.eth.accounts[0] == this.arbitrator){
+                return true;
+            } else {
+                return false;
+            }
+        },
+        canfinish(){
+            if (web3.eth.accounts[0] == this.arbitrator && this.estatus == 0){
+                return true;
+            } else {
+                return false;
+            }
         }
     },
     methods: {
@@ -671,9 +710,18 @@ const showEventComp = Vue.component('show-event-component', {
                     this.loading = 0;
                     //console.log(response.data);
                     this.event = response.data;
+                    this.contract = web3.eth.contract(this.abi).at(this.event.contract);
                     this.getFromBlockchain();
                     this.getPools();
                 })
+        },
+        watchBlock(){
+            let that = this;
+            setInterval(function(){
+                web3.eth.getBlockNumber(function(e,d){
+                    that.currentblock = d;
+                })
+            }, 3000)
         },
         addOption() {
             this.pool.options.push({name: ''});
@@ -689,8 +737,40 @@ const showEventComp = Vue.component('show-event-component', {
             });
             contract.endBlock(function(e,d){
                 that.end = d.toNumber();
+            });
+            contract.status(function(e,d){
+                that.estatus = d.toNumber();
             })
 
+        },
+        setactivepool(pool){
+            this.locked = 1;
+            this.activepool.active = 1;
+            this.activepool.name = pool.name;
+            this.activepool.id = pool.id;
+            this.getActivePool();
+        },
+        getActivePool(){
+            let that = this;
+            this.activepool.bids = [];
+            this.activepool.loaded = 0;
+            this.contract.getBidsNum(this.activepool.id, function(e,d){
+                if(d){
+                    let num = d.toNumber();
+                    for (let i=0;i<num;i++){
+                        that.contract.getBid(that.activepool.id, i, function(e,d){
+                            let bid = {};
+                            bid.id = d[0].toNumber();
+                            bid.name = web3.toAscii(d[1]);
+                            bid.amount = web3.fromWei(d[2].toNumber());
+                            that.activepool.bids.push(bid);
+                            if (that.activepool.bids.length == num){
+                                that.activepool.loaded = 1;
+                            }
+                        })
+                    }
+                }
+            })
         },
         createPool(){
             let that = this;
@@ -698,7 +778,7 @@ const showEventComp = Vue.component('show-event-component', {
             let hexname = web3.toHex(this.currentpool.name);
             let hexnames = [];
             this.currentpool.options.forEach(function(el){
-                hexnames.push(web3.toHex(el));
+                hexnames.push(web3.toHex(el.name));
             });
             contract.createPool(hexname, hexnames, this.currentpool.min, this.currentpool.max, function(e,d){
                 if (d){
@@ -709,12 +789,11 @@ const showEventComp = Vue.component('show-event-component', {
         },
         getPools(){
             let that = this;
-            let contract = web3.eth.contract(this.abi).at(this.event.contract);
-            contract.getPoolsNum(function(e,d){
+            this.contract.getPoolsNum(function(e,d){
                 if (d){
                     let num = d.toNumber();
                     for (let i = 0;i<num;i++){
-                        contract.bettingPools(i, function(e,d){
+                        that.contract.bettingPools(i, function(e,d){
                             if (d){
                                 let pool = {};
                                 pool.id = d[0].toNumber();
@@ -741,10 +820,12 @@ const showEventComp = Vue.component('show-event-component', {
         close(){
             this.locked = 0;
             this.currentpool = false;
+            this.activepool.active = 0;
         }
     },
     created(){
         this.getEvent();
+        this.watchBlock();
     }
 });
 const routes = [

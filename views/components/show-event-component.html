@@ -1,11 +1,22 @@
 <script type="text/x-template" id="show-event">
 <div class="row content-row">
-    <div class="col-lg-6" v-if="loading==1">
+    <div class="col-lg-12" v-if="loading==1">
         <div class="spinner"></div>
     </div>
     <div class="overlay" @click="close()" v-if="locked"></div>
     <div class="col-lg-12" v-if="loading==0">
         <router-link to="/events" tag="div" class="back-btn"><< Back</router-link>
+    </div>
+    <div class="pool-modal" v-if="activepool.active">
+        <h2>Manage pool</h2>
+        <h3>Name: {{activepool.name}}</h3>
+        <h4>Bids:</h4>
+        <div class="spinner-small" v-if="activepool.loaded == 0"></div>
+        <div v-for="bid in activepool.bids" class="bid" v-if="activepool.loaded == 1">
+            <p>{{bid.name}} - {{bid.amount}} ETH received</p><button class="btn" v-if="!activepool.winner">Winner</button>
+            <p v-if="activepool.winner">This bid is the winner</p>
+        </div>
+        <button class="btn" @click="close()">Close</button>
     </div>
     <div class="pool-modal" v-if="currentpool">
         <h4>Pool settings</h4>
@@ -26,11 +37,15 @@
     </div>
     <div class="col-lg-5 content-box" v-if="loading==0">
         <h1>{{event.name}}</h1>
-        <span>Event id : {{event.id}}</span>
+        <h2>Status: {{status}}</h2>
+        <p v-if="isarbitrator">You are the arbitrator of this event</p>
+        <button class="btn" v-if="canfinish" style="margin-bottom: 10px;">Finish event</button>
+        <p>Event id : {{event.id}}</p>
         <p>Contract address: <a target="_blank" v-bind:href="link">{{event.contract}}</a></p>
         <p>Arbitrator: <a target="_blank" v-bind:href="alink">{{arbitrator}}</a></p>
         <p>Fee: {{fee}}</p>
         <p>End block: {{end}}</p>
+        <p>(Current block is {{currentblock}})</p>
         <h3>Created pools</h3>
         <p style="color:red;" v-show="poolcreated">Wait until transaction is mined and reload this page to see new pool</p>
         <p v-if="pools.length==0">No pools</p>
@@ -42,14 +57,14 @@
             </tr>
             </thead>
             <tbody>
-            <tr v-for="pool in pools">
+            <tr v-for="pool in pools" class="pool-tr" @click="setactivepool(pool)">
                 <td>{{pool.id}}</td>
                 <td>{{pool.name}}</td>
             </tr>
             </tbody>
         </table>
     </div>
-    <div class="col-lg-6 offset-1" v-show="loading==0">
+    <div class="col-lg-6 offset-1" v-show="loading==0" v-if="isarbitrator">
         <h1>New pool</h1>
         <div class="row">
             <div class="col-md-6">

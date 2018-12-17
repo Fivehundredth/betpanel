@@ -7,6 +7,12 @@
     background-image: url('/Spinner-1s-200px.gif');
     margin: 0 auto;
 }
+.spinner-small{
+    width: 79px;
+    height: 79px;
+    background-image: url('/Rolling-1s-79px.gif');
+    margin: 0 auto;
+}
 #new-pool-options input{
     margin-bottom: 10px;
 }
@@ -175,4 +181,16 @@
     padding: 30px;
     border-radius: 30px;
     border: 1px solid black;
+}
+.pool-tr:hover{
+    cursor: pointer;
+}
+.pool-modal h2{
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+.bid {
+    margin-bottom: 30px;
+    border-bottom: 1px solid black;
+    padding-bottom: 10px;
 }
