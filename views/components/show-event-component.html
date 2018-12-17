@@ -11,9 +11,11 @@
         <h2>Manage pool</h2>
         <h3>Name: {{activepool.name}}</h3>
         <h4>Bids:</h4>
+        <p v-if="estatus == 0 && isarbitrator">You need to finish an event to be able to set a winner</p>
         <div class="spinner-small" v-if="activepool.loaded == 0"></div>
         <div v-for="bid in activepool.bids" class="bid" v-if="activepool.loaded == 1">
-            <p>{{bid.name}} - {{bid.amount}} ETH received</p><button class="btn" v-if="!activepool.winner">Winner</button>
+            <p>{{bid.name}} - {{bid.amount}} ETH received</p>
+            <button class="btn" v-if="cansetwinner" @click="setwinner(activepool.id, bid.name)">Winner</button>
             <p v-if="activepool.winner">This bid is the winner</p>
         </div>
         <button class="btn" @click="close()">Close</button>
@@ -37,9 +39,10 @@
     </div>
     <div class="col-lg-5 content-box" v-if="loading==0">
         <h1>{{event.name}}</h1>
+        <div class="spinner-small" v-if="mining"></div>
         <h2>Status: {{status}}</h2>
         <p v-if="isarbitrator">You are the arbitrator of this event</p>
-        <button class="btn" v-if="canfinish" style="margin-bottom: 10px;">Finish event</button>
+        <button class="btn" v-if="canfinish" style="margin-bottom: 10px;" @click="finishevent()">Finish event</button>
         <p>Event id : {{event.id}}</p>
         <p>Contract address: <a target="_blank" v-bind:href="link">{{event.contract}}</a></p>
         <p>Arbitrator: <a target="_blank" v-bind:href="alink">{{arbitrator}}</a></p>
@@ -64,7 +67,7 @@
             </tbody>
         </table>
     </div>
-    <div class="col-lg-6 offset-1" v-show="loading==0" v-if="isarbitrator">
+    <div class="col-lg-6 offset-1" v-show="loading==0" v-if="isarbitrator && estatus == 0">
         <h1>New pool</h1>
         <div class="row">
             <div class="col-md-6">

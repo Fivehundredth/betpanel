@@ -2,7 +2,6 @@ const createEventComp = Vue.component('create-event-component',{
     template: '#create-event',
     data(){
         return {
-            name: '',
             loading: 0,
             id: 0,
             fee: '',
@@ -11,7 +10,31 @@ const createEventComp = Vue.component('create-event-component',{
             contract: '',
             error: '',
             mining: 0,
-            hash: ''
+            hash: '',
+            hometeam: {short: ''},
+            guestteam: {short: ''},
+            teams: [
+                {id: 1, full: 'AFC Bournemouth', short: 'Bournemouth'},
+                {id: 2, full: 'Arsenal', short: 'Arsenal'},
+                {id: 3, full: 'Brighton & Hove Albion', short: 'Brighton'},
+                {id: 4, full: 'Burnley', short: 'Burnley'},
+                {id: 5, full: 'Cardiff City', short: 'Cardiff'},
+                {id: 6, full: 'Chelsea', short: 'Chelsea'},
+                {id: 7, full: 'Crystal Palace', short: 'Cr.Palace'},
+                {id: 8, full: 'Everton', short: 'Everton'},
+                {id: 9, full: 'Fulham', short: 'Fulham'},
+                {id: 10, full: 'Huddersfield Town', short: 'Huddersfield'},
+                {id: 11, full: 'Leicester City', short: 'Leicester'},
+                {id: 12, full: 'Liverpool', short: 'Liverpool'},
+                {id: 13, full: 'Manchester City', short: 'Man.City'},
+                {id: 14, full: 'Manchester United', short: 'Man.United'},
+                {id: 15, full: 'Newcastle United', short: 'Newcastle'},
+                {id: 16, full: 'Southampton', shot: 'Southampton'},
+                {id: 17, full: 'Tottenham Hotspur', short: 'TottenhamHot'},
+                {id: 18, full: 'Watford', short: 'Watford'},
+                {id: 19, full: 'West Ham United', short: 'WestHamUn'},
+                {id: 20, full: 'Wolverhampton Wanderers', short: 'Wolverhampton'}
+            ]
         }
     },
     methods: {
@@ -26,6 +49,7 @@ const createEventComp = Vue.component('create-event-component',{
             }
             if (!this.name.length){
                 this.error = 'Enter name';
+                return;
             } else {
                 this.error = '';
             }
@@ -108,6 +132,11 @@ const createEventComp = Vue.component('create-event-component',{
                     }
                 })
         }
+    },
+    computed: {
+        name(){
+            return this.hometeam.short+'-vs-'+this.guestteam.short;
+        }
     }
 });
 const eventsComp = Vue.component('events-component', {
@@ -151,6 +180,7 @@ const showEventComp = Vue.component('show-event-component', {
                         name: 'winner',
                         options: [
                             {name: 'team1'},
+                            {name: 'draw'},
                             {name: 'team2'}
                         ],
                         min: 0,
@@ -653,6 +683,8 @@ const showEventComp = Vue.component('show-event-component', {
             contract: {},
             poolcreated: 0,
             locked: 0,
+            mining: 0,
+            loadingpools: 0,
             currentblock: 0,
             activepool:
                 {
@@ -697,6 +729,17 @@ const showEventComp = Vue.component('show-event-component', {
         },
         canfinish(){
             if (web3.eth.accounts[0] == this.arbitrator && this.estatus == 0){
+                if (this.end > 0){
+                    return this.currentblock > this.end;
+                } else {
+                    return true;
+                }
+            } else {
+                return false;
+            }
+        },
+        cansetwinner(){
+            if (web3.eth.accounts[0] == this.arbitrator && this.estatus == 1 && !this.activepool.winner){
                 return true;
             } else {
                 return false;
@@ -723,8 +766,34 @@ const showEventComp = Vue.component('show-event-component', {
                 })
             }, 3000)
         },
+        watchStatus(){
+            let that = this;
+            setInterval(function(){
+                that.contract.status(function(e,d){
+                    if (d.toNumber() != that.estatus){
+                        that.mining = 0;
+                    }
+                    that.estatus = d.toNumber();
+                })
+            },3000)
+        },
         addOption() {
             this.pool.options.push({name: ''});
+        },
+        finishevent(){
+            let that = this;
+            this.contract.finishEvent(function(e,d){
+                if (d){
+                    that.mining = 1;
+                }
+            })
+        },
+        setwinner(id, name){
+            this.contract.determineWinner(id, web3.toHex(name),function(e,d){
+                if (d){
+                    this.mining = 1;
+                }
+            })
         },
         getFromBlockchain(){
             let that = this;
@@ -826,6 +895,7 @@ const showEventComp = Vue.component('show-event-component', {
     created(){
         this.getEvent();
         this.watchBlock();
+        this.watchStatus();
     }
 });
 const routes = [

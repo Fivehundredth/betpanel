@@ -19,6 +19,9 @@
 .close-pool-btn{
     margin-top: 30px;
 }
+.content {
+    margin-left: 200px;
+}
 .content-box{
     background: linear-gradient(to bottom, #e7e7e7 0%,#c1c1c1 41%,#b2b2b2 75%,#a2a2a2 100%);
     border-radius: 19px;
@@ -111,9 +114,12 @@
 }
 .events-box h2 {
     font-weight: bold;
-    display: inline-block;
+    display: block;
     margin-left: 30px;
     line-height: 50px;
+}
+.teamcol {
+    display: inline-block;
 }
 .soccer-icon{
     background-image: url('../images/soccer.svg');
