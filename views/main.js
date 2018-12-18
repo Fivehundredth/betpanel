@@ -166,7 +166,9 @@ const showEventComp = Vue.component('show-event-component', {
     data(){
         return {
             loading: 1,
-            event: {},
+            event: {
+                name: '',
+            },
             fee: 0,
             arbitrator: '',
             estatus: 0,
@@ -179,7 +181,7 @@ const showEventComp = Vue.component('show-event-component', {
                         id: 1,
                         name: 'winner',
                         options: [
-                            {name: 'team1'},
+                            {name: 'dad'},
                             {name: 'draw'},
                             {name: 'team2'}
                         ],
@@ -758,7 +760,7 @@ const showEventComp = Vue.component('show-event-component', {
             } else {
                 return false;
             }
-        }
+        },
     },
     methods: {
         getEvent(){
@@ -896,6 +898,14 @@ const showEventComp = Vue.component('show-event-component', {
             let that = this;
             this.possiblePools.forEach(function(elem){
                 if (elem.id == id){
+                    if (elem.id == 1){
+                        elem.options =
+                            [
+                            {name: that.event.name.split('-vs-')[0]},
+                            {name: 'draw'},
+                            {name: that.event.name.split('-vs-')[1]}
+                            ]
+                    }
                     that.currentpool = elem;
                 }
             })
