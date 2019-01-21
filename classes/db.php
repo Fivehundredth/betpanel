@@ -18,7 +18,7 @@ class db
             }
             catch (\PDOException $e)
             {
-                echo $e->getMessage();
+                throw new PDOException($e->getMessage());
             }
         }
         return self::$instance;

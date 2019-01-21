@@ -7,8 +7,12 @@
             </ul>
         </nav>
         <div class="col-lg-12 events-box" v-if="loading==0">
-            <div class="soccer-icon"></div>
-            <h2>Soccer</h2>
+            <div class="soccer-icon" v-if="events.length"></div>
+            <h2 v-if="events.length">Soccer</h2>
+            <div class="alert alert-danger" v-if="error">
+                <h2>Error</h2>
+                <p>{{error}}</p>
+            </div>
                 <router-link v-for="event in events" :key="event.id" tag="div" class="event-tr" :to="{name: 'show-event', params:{id: event.id}}" style="cursor: pointer;">
                     <span>{{event.id}}</span><span>{{event.name}}</span>
                 </router-link>

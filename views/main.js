@@ -144,16 +144,21 @@ const eventsComp = Vue.component('events-component', {
     data(){
         return {
             loading: 1,
-            events: []
+            events: [],
+            error: ''
         }
     },
     methods: {
         getEvents(){
             axios.get('/index.php?action=get-events')
                 .then(response => {
-                    //console.log(response.data);
+                    console.log(response);
                     this.loading = 0;
-                    this.events = response.data;
+                    if (response.data.error){
+                        this.error = response.data.error;
+                    } else {
+                        this.events = response.data;
+                    }
                 })
         }
     },

@@ -1,0 +1,19 @@
+<script type="text/x-template" id="show-event-component">
+<div class="row content-row">
+    <div class="col-lg-12 events-box">
+        <div class="event-info">
+            <h1>{{event.name}}</h1>
+            <h2>Status: {{status}}</h2>
+            <h3>Contract address:</h3>
+            <p><a v-bind:href="link" target="_blank">{{link}}</a></p>
+            <h3>Arbitrator's address:</h3>
+            <p><a v-bind:href="alink">{{alink}}</a></p>
+            <p>Arbitator's fee: {{fee}} %</p>
+        </div>
+        <div class="event-pools">
+            <h1>Available pools</h1>
+                <p v-for="pool in pools">{{pool.name}}</p>
+        </div>
+    </div>
+</div>
+</script>
